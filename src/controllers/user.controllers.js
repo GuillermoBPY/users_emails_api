@@ -158,6 +158,8 @@ const resetPassword = catchError(async (req, res) => {
     returning: true,
   });
 
+  if (userUpdate[0] === 0) return res.sendStatus(404);
+
   await codeUser.destroy();
 
   return res.json(userUpdate[1][0]);
