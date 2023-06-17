@@ -4,8 +4,8 @@ const bcrypt = require('bcrypt');
 const sendEmail = require('../utils/sendEmail');
 const EmailCode = require('../models/EmailCode');
 const jwt = require('jsonwebtoken');
-const validationMessage = require('../utils/validationmessage');
-const resetPassMessage = require('../utils/ResetPassMessage');
+const validationMessage = require('../utils/validationMessage');
+const resetPassMessage = require('../utils/resetPassMessage');
 
 const getAll = catchError(async (req, res) => {
   const results = await User.findAll();
@@ -43,7 +43,7 @@ const create = catchError(async (req, res) => {
   await sendEmail({
     to: `${email}`,
     subject: 'Email Validation',
-    html: validationMessage(url),
+    html: await validationMessage(url),
   });
 
   const bodyCode = {
@@ -130,7 +130,7 @@ const verifyReset = catchError(async (req, res) => {
   await sendEmail({
     to: `${email}`,
     subject: 'Password Reset',
-    html: resetPassMessage(url),
+    html: await resetPassMessage(url),
   });
 
   const existCode = await EmailCode.findOne({ where: { userId: user.id } });
