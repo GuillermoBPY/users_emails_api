@@ -1,5 +1,5 @@
 const validationMessage = (url) => {
-  return `<!DOCTYPE html>
+  const htmlText = `<!DOCTYPE html>
   <html>
   <head>
       <meta charset="UTF-8">
@@ -20,6 +20,8 @@ const validationMessage = (url) => {
       </div>
   </body>
   </html>`;
+
+  return htmlText;
 };
 
 module.exports = validationMessage;

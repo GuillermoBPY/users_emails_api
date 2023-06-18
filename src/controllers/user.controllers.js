@@ -84,7 +84,8 @@ const update = catchError(async (req, res) => {
 const verifyEmail = catchError(async (req, res) => {
   const { code } = req.params;
   const codeUser = await EmailCode.findOne({ where: { code } });
-  if (!codeUser) return res.sendStatus(401).json({ message: 'Code Not Found' });
+  if (!codeUser)
+    return res.sendStatus(401).json({ message: 'Invalid Cretential' });
   const body = { isVerified: true };
 
   const userUpdate = await User.update(body, {
@@ -125,6 +126,9 @@ const verifyReset = catchError(async (req, res) => {
   const user = await User.findOne({ where: { email } });
   if (!user) return res.status(401).json({ message: 'Invalid Cretential' });
 
+  const existCode = await EmailCode.findOne({ where: { userId: user.id } }); //Busca si ya existe un codigo anterior para ese id, si existe lo elimina.
+  if (existCode) existCode.destroy();
+
   const code = require('crypto').randomBytes(64).toString('hex');
   const url = `${frontBaseUrl}/reset_password/${code}`;
   await sendEmail({
@@ -132,9 +136,6 @@ const verifyReset = catchError(async (req, res) => {
     subject: 'Password Reset',
     html: resetPassMessage(url),
   });
-
-  const existCode = await EmailCode.findOne({ where: { userId: user.id } });
-  if (existCode) existCode.destroy();
 
   const bodyCode = {
     code,
