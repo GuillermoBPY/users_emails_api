@@ -1,33 +1,33 @@
+//-----------Controllers-----------
 const {
-  getAll,
-  create,
-  getOne,
-  remove,
-  update,
-  verifyEmail,
-  login,
-  logged,
-  verifyReset,
-  resetPassword,
+  getAllUsers,
+  createUser,
+  loggedUser,
+  loginUser,
+  getOneUser,
+  removeUser,
+  updateUser,
+  verifiyUserEmail,
+  resetUserPass,
+  verifyUserPassReset,
 } = require('../controllers/user.controllers');
+//-----------Librerias-----------
 const express = require('express');
+const routerUser = express.Router(); //Instancia de libreria
+//-----------Utilidades-----------
 const verifyJWT = require('../utils/verifyJWT');
-
-const routerUser = express.Router();
-
-routerUser.route('/reset_password').post(verifyReset);
-routerUser.route('/').get(verifyJWT, getAll).post(create);
-routerUser.route('/me').get(verifyJWT, logged);
-
-routerUser.route('/login').post(login);
-
+//-----------Statics Routes-----------
+routerUser.route('/').get(verifyJWT, getAllUsers).post(createUser);
+routerUser.route('/me').get(verifyJWT, loggedUser);
+routerUser.route('/login').post(loginUser);
+routerUser.route('/reset_password').post(verifyUserPassReset);
+//-----------Dinamics Routes-----------
 routerUser
   .route('/:id')
-  .get(verifyJWT, getOne)
-  .delete(verifyJWT, remove)
-  .put(verifyJWT, update);
-
-routerUser.route('/verify/:code').get(verifyEmail);
-routerUser.route('/reset_password/:code').post(resetPassword);
+  .get(verifyJWT, getOneUser)
+  .delete(verifyJWT, removeUser)
+  .put(verifyJWT, updateUser);
+routerUser.route('/verify/:code').get(verifiyUserEmail);
+routerUser.route('/reset_password/:code').post(resetUserPass);
 
 module.exports = routerUser;
