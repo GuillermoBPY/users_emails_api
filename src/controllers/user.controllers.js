@@ -43,7 +43,7 @@ const create = catchError(async (req, res) => {
   await sendEmail({
     to: `${email}`,
     subject: 'Email Validation',
-    html: await validationMessage(url),
+    html: validationMessage(url),
   });
 
   const bodyCode = {
@@ -123,14 +123,14 @@ const logged = catchError(async (req, res) => {
 const verifyReset = catchError(async (req, res) => {
   const { email, frontBaseUrl = 'http://localhost:8080/#' } = req.body;
   const user = await User.findOne({ where: { email } });
-  if (!user) return res.status(401).json({ message: 'User not found' });
+  if (!user) return res.status(401).json({ message: 'Invalid Cretential' });
 
   const code = require('crypto').randomBytes(64).toString('hex');
   const url = `${frontBaseUrl}/reset_password/${code}`;
   await sendEmail({
     to: `${email}`,
     subject: 'Password Reset',
-    html: await resetPassMessage(url),
+    html: resetPassMessage(url),
   });
 
   const existCode = await EmailCode.findOne({ where: { userId: user.id } });
@@ -142,20 +142,20 @@ const verifyReset = catchError(async (req, res) => {
   };
   await EmailCode.create(bodyCode);
 
-  return res.status(201).json({ message: 'Email sended', email });
+  return res.status(201).json({ message: 'Email sended', email }); //Se retorna email para uso del Frontend en la nofificación emergente.
 });
 
 const resetPassword = catchError(async (req, res) => {
   const { password } = req.body;
   const { code } = req.params;
   const codeUser = await EmailCode.findOne({ where: { code } });
-  if (!codeUser) return res.sendStatus(401).json({ message: 'Code Not Found' });
+  if (!codeUser)
+    return res.sendStatus(401).json({ message: 'Invalid Cretential' });
 
   const hashpassword = await bcrypt.hash(password, 10);
   const body = { password: hashpassword };
   const userUpdate = await User.update(body, {
     where: { id: codeUser.userId },
-    returning: true,
   });
 
   if (userUpdate[0] === 0) return res.sendStatus(404);
