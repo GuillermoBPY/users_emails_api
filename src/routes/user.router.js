@@ -27,7 +27,9 @@ routerUser
   .get(verifyJWT, getOneUser)
   .delete(verifyJWT, removeUser)
   .put(verifyJWT, updateUser);
+
 routerUser.route('/verify/:code').get(verifiyUserEmail);
+
 routerUser.route('/reset_password/:code').post(resetUserPass);
 
 module.exports = routerUser;

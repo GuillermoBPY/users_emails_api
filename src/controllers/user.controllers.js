@@ -135,6 +135,7 @@ const resetUserPass = catchError(async (req, res) => {
   const { password } = req.body;
   const { code } = req.params;
   const codeUser = await EmailCode.findOne({ where: { code } });
+  console.log(`xxxxxxxxxxxxxxx${codeUser}`);
   if (!codeUser)
     return res.sendStatus(401).json({ message: 'Invalid Cretential' });
   const hashpassword = await bcrypt.hash(password, 10);
@@ -144,7 +145,7 @@ const resetUserPass = catchError(async (req, res) => {
   });
   if (userUpdate[0] === 0) return res.sendStatus(404);
   await codeUser.destroy();
-  return res.json(userUpdate[1][0]);
+  return res.json({ message: 'User Updated' });
 });
 
 module.exports = {
