@@ -8,8 +8,8 @@ const {
   removeUser,
   updateUser,
   verifiyUserEmail,
-  resetUserPass,
   verifyUserPassReset,
+  resetUserPass,
 } = require('../controllers/user.controllers');
 //-----------Librerias-----------
 const express = require('express');
